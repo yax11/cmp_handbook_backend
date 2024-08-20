@@ -19,6 +19,8 @@ mongoose.connect(mongoURI)
 app.post('/login', async (req, res) => {
   const { phone, reg } = req.body;
 
+  console.log('LOGIN ATTEMPTED');
+
   // Validate input
   if (!phone || !reg) {
     return res.status(400).json(createResponse(false, 'Phone number and registration number are required'));
@@ -29,6 +31,7 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ phone, reg });
 
     if (user) {
+      console.log("Login successful");
       return res.status(200).json(createResponse(true, 'Login successful', user));
     } else {
       return res.status(404).json(createResponse(false, 'Invalid phone number or registration number'));
@@ -58,7 +61,7 @@ app.post('/sendComplaint', async (req, res) => {
 
     // Save the complaint to the database
     await complaint.save();
-
+    console.log("Complaint saved to database");
     return res.status(201).json(createResponse(true, 'Complaint submitted successfully', complaint));
   } catch (error) {
     console.error('Error during complaint submission:', error);
@@ -82,6 +85,7 @@ app.get('/handbook/info', async (req, res) => {
       if (!handbook) {
           return res.status(404).json({ message: "Handbook not found" });
       }
+      console.log("Handbook Info found");
       res.json({
           handbook_location: handbook.handbook_location,
           last_updated: handbook.last_updated
@@ -105,6 +109,7 @@ app.get('/handbook/download', async (req, res) => {
       return res.status(404).json({ message: "Handbook not found" });
     }
 
+    console.log("Download sent");
     res.download(filePath, (err) => {
       if (err) {
         console.error("Error downloading the file:", err);
